@@ -31,6 +31,7 @@ class Bot:
         return True
 
     def send(self, text, buttons=None):
+        buttons = buttons or ['Позови оператора']
         message = Message(1, text, name='Бот', avatar='/bot.jpg', buttons=buttons)
         return db.push_messages(self.req_id, [message])
 
