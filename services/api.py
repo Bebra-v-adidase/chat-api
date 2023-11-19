@@ -21,7 +21,7 @@ async def createRequest(request: CreateRequestData):
         return ApiResponse(False, str(e))
 
 @router.post("/sendMessage")
-async def createRequest(request: SendMessageData):
+async def sendMessage(request: SendMessageData):
     try:
         msg = Message(0, request.text)
         message_id = db.push_message(request.request_id, msg)
@@ -30,10 +30,19 @@ async def createRequest(request: SendMessageData):
         return ApiResponse(False, str(e))
 
 @router.post("/getHistory")
-async def createRequest(request: GetHistoryData):
+async def getHistory(request: GetHistoryData):
     try:
         messages = db.get_history(request.request_id)
         return ApiResponse(True, messages)
+    except Exception as e:
+        return ApiResponse(False, str(e))
+
+@router.post("/getUpdates")
+async def getUpdates(request: GetUpdatesData):
+    try:
+        last_id = int(request.last_id)
+        messages = db.get_history(request.request_id)
+        return ApiResponse(True, messages[last_id:])
     except Exception as e:
         return ApiResponse(False, str(e))
 

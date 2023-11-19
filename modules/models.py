@@ -31,6 +31,9 @@ class SendMessageData(BaseModel):
 class GetHistoryData(BaseModel):
     request_id: int
 
+class GetUpdatesData(GetHistoryData):
+    last_id: int
+
 def ApiResponse(success, data=None):
     return {
         'ok': success,
