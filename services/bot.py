@@ -30,8 +30,8 @@ class Bot:
 
         return True
 
-    def send(self, text):
-        message = Message(1, text, name='Бот', avatar='/bot.jpg')
+    def send(self, text, buttons=None):
+        message = Message(1, text, name='Бот', avatar='/bot.jpg', buttons=buttons)
         return db.push_messages(self.req_id, [message])
 
     def handle(self, text, cat: int = -1, step: int = 0):
@@ -40,14 +40,13 @@ class Bot:
         if a and step <= len(a):
             a = a[step]
         else:
-            return
+            a = ['switch', 'Упс! Пока что я не помочь с этим вопросом']
 
         print(a)
-        match a[0]:
-            case 'send':
-                self.send(a[1])
-                db.set_req_var(self.req_id, 'bot_step', step + 1)
-            case 'switch':
-                messages = []
-                Bot.switch_to_human(messages, self.req_id, a[1])
-                db.push_messages(self.req_id, messages)
+        if a[0] == 'send':
+            self.send(a[1], a[2] if len(a) > 2 else None)
+            db.set_req_var(self.req_id, 'bot_step', step + 1)
+        elif a[0] == 'switch':
+            messages = []
+            Bot.switch_to_human(messages, self.req_id, a[1])
+            db.push_messages(self.req_id, messages)

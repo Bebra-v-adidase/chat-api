@@ -4,7 +4,7 @@ from typing import List
 from pydantic import BaseModel
 
 class Message:
-    def __init__(self, from_id: int, text: str, date: int = None, name: str = None, avatar: str = None):
+    def __init__(self, from_id: int, text: str, date: int = None, name: str = None, avatar: str = None, buttons: List[str] = None):
         self.text = text
         self.from_id = from_id
         self.date = date or int(time())
@@ -12,6 +12,7 @@ class Message:
         if name:
             self.name = name
             self.avatar = avatar
+            self.buttons = buttons
 
 class MessageEncoder(json.JSONEncoder):
     def default(self, obj):
