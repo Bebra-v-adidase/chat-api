@@ -32,15 +32,7 @@ async def sendMessage(request: SendMessageData):
 @router.post("/getHistory")
 async def getHistory(request: GetHistoryData):
     try:
-        messages = db.get_history(request.request_id)
-        return ApiResponse(True, messages)
-    except Exception as e:
-        return ApiResponse(False, str(e))
-
-@router.post("/getUpdates")
-async def getUpdates(request: GetUpdatesData):
-    try:
-        last_id = int(request.last_id)
+        last_id = int(request.start_from)
         messages = db.get_history(request.request_id)
         return ApiResponse(True, messages[last_id:])
     except Exception as e:

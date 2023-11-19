@@ -4,9 +4,9 @@ from typing import List
 from pydantic import BaseModel
 
 class Message:
-    def __init__(self, from_id: int, text: str, date: int = None):
+    def __init__(self, type: int, text: str, date: int = None):
         self.text = text
-        self.from_id = from_id
+        self.type = type
         self.date = date or int(time())
 
 class MessageEncoder(json.JSONEncoder):
@@ -30,9 +30,7 @@ class SendMessageData(BaseModel):
 
 class GetHistoryData(BaseModel):
     request_id: int
-
-class GetUpdatesData(GetHistoryData):
-    last_id: int
+    start_from: int = None
 
 def ApiResponse(success, data=None):
     return {
