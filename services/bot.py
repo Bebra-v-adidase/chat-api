@@ -1,5 +1,6 @@
 from modules.models import Message
 from services.crud import CRUD
+from time import time
 
 db = CRUD()
 
@@ -12,7 +13,10 @@ class Bot:
 
     @staticmethod
     def switch_to_human(messages, id=False):
-        messages.append(Message(2, 'Переключаем на оператора...'))
+        service_msg = Message(2, 'Переключаем на оператора...')
+        operator_msg = Message(1, 'Вижу Ваш вопрос, скоро отвечу...', int(time() + 5), 'Виталий', '/operator.jpg')
+        messages.extend([service_msg, operator_msg])
+
         if id:
             db.set_req_var(id, 'bot_step', -1)
 

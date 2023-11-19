@@ -3,6 +3,7 @@ from services.crud import CRUD
 from modules.models import *
 from modules.request_classifier import RequestClassifier
 from services.bot import Bot
+from time import time
 
 db = CRUD()
 router = APIRouter()
@@ -50,6 +51,8 @@ async def getHistory(request: GetHistoryData):
     try:
         last_id = int(request.start_from)
         messages = db.get_history(request.request_id)
+        messages = list(filter(lambda x: x['date'] < time(), messages))
+
         return ApiResponse(True, {
             'count': len(messages),
             'items': messages[last_id:]

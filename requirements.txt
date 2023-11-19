@@ -1,7 +1,5 @@
 uvicorn
 fastapi
-yandexfreetranslate
-SQLAlchemy
 pydantic
 
 numpy
