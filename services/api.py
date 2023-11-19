@@ -24,8 +24,8 @@ async def createRequest(request: CreateRequestData):
 async def sendMessage(request: SendMessageData):
     try:
         msg = Message(0, request.text)
-        message_id = db.push_message(request.request_id, msg)
-        return ApiResponse(True, message_id)
+        next_id = db.push_message(request.request_id, msg)
+        return ApiResponse(True, next_id)
     except Exception as e:
         return ApiResponse(False, str(e))
 

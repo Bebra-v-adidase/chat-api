@@ -30,7 +30,7 @@ class CRUD:
         ''', (m_encoded, request_id))
         self.conn.commit()
 
-        return len(messages) - 1
+        return len(messages)
 
     def get_history(self, request_id: int):
         self.cursor.execute('SELECT messages FROM requests WHERE id = ?', (request_id,))
