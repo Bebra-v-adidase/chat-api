@@ -1,0 +1,10 @@
+uvicorn
+fastapi
+yandexfreetranslate
+SQLAlchemy
+pydantic
+
+numpy
+joblib
+scikit-learn
+PyStemmer

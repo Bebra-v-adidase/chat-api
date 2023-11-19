@@ -1,0 +1,6 @@
+.DS_store
+db.sqlite
+.idea
+*.pyc
+
+modules/request_classifier
