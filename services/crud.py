@@ -1,21 +1,39 @@
 import json
 from modules.db import get_connection
-from modules.models import MessageEncoder
+from modules.models import MessageEncoder, Message
 
 
-def create_request(category: int, priority: int, messages: list, employee_id: int):
-    conn = get_connection()
-    cursor = conn.cursor()
+class CRUD:
+    def __init__(self):
+        self.conn = get_connection()
+        self.cursor = self.conn.cursor()
 
-    messages = json.dumps(messages, cls=MessageEncoder)
-    cursor.execute('''
-        INSERT INTO requests (category, priority, messages, employee_id)
-        VALUES (?, ?, ?, ?)
-    ''', (category, priority, messages, employee_id))
+    def create_request(self, category: int, priority: int, messages: list, employee_id: int):
+        messages = json.dumps(messages, cls=MessageEncoder)
+        self.cursor.execute('''
+            INSERT INTO requests (category, priority, messages, employee_id)
+            VALUES (?, ?, ?, ?)
+        ''', (category, priority, messages, employee_id))
 
-    request_id = cursor.lastrowid
+        request_id = self.cursor.lastrowid
+        self.conn.commit()
 
-    conn.commit()
-    conn.close()
+        return request_id
 
-    return request_id
+    def push_message(self, request_id: int, msg: Message):
+        self.cursor.execute('SELECT messages FROM requests WHERE id = ?', (request_id,))
+        result = self.cursor.fetchone()
+
+        if not result:
+            raise 'no such request'
+
+        messages = json.loads(result[0])
+        messages.append(msg)
+        m_encoded = json.dumps(messages, cls=MessageEncoder)
+
+        self.cursor.execute('''
+            UPDATE requests SET messages = ? WHERE id = ?
+        ''', (m_encoded, request_id))
+        self.conn.commit()
+
+        return len(messages) - 1
