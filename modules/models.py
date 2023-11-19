@@ -20,10 +20,12 @@ class MessageEncoder(json.JSONEncoder):
         return super().default(obj)
 
 class Request:
-    id: int
-    category: str
-    priority: int
-    messages: List[Message]
+    def __init__(self, id: int = None, category: int = None, priority: int = 0, messages: List[Message] = None, bot_step: int = 0):
+        self.id = id
+        self.category = category
+        self.priority = priority
+        self.bot_step = bot_step
+        self.messages = messages or []
 
 class CreateRequestData(BaseModel):
     text: str

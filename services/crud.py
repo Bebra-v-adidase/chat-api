@@ -36,9 +36,9 @@ class CRUD:
 
         return first_id
 
-    def get_req_var(self, request_id: int, var: str):
-        self.cursor.execute('SELECT '+var+' FROM requests WHERE id = ?', (request_id,))
-        return self.cursor.fetchone()[0]
+    def get_req(self, request_id: int):
+        self.cursor.execute('SELECT bot_step, category FROM requests WHERE id = ?', (request_id,))
+        return self.cursor.fetchone()
 
     def set_req_var(self, request_id: int, var: str, value):
         self.cursor.execute('UPDATE requests SET '+var+' = ? WHERE id = ?', (value, request_id,))
