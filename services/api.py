@@ -2,19 +2,22 @@ from fastapi import APIRouter
 from services.crud import CRUD
 from modules.models import *
 from modules.request_classifier import RequestClassifier
+from services.bot import Bot
 
 db = CRUD()
 router = APIRouter()
+m = RequestClassifier()
 
 @router.post("/createRequest")
 async def createRequest(request: CreateRequestData):
     try:
         text = request.text
-        m = RequestClassifier()
         data = m.predict(text)
 
         messages = [Message(0, text)]
-        id = db.create_request(data[0], data[1], messages, 0)
+        use_bot = Bot.check_bot(data, messages)
+
+        id = db.create_request(data[0], data[1], messages, 0, use_bot)
 
         return ApiResponse(True, id)
     except Exception as e:
@@ -23,9 +26,18 @@ async def createRequest(request: CreateRequestData):
 @router.post("/sendMessage")
 async def sendMessage(request: SendMessageData):
     try:
-        msg = Message(0, request.text)
-        next_id = db.push_message(request.request_id, msg)
-        return ApiResponse(True, next_id)
+        text = request.text
+        id = request.request_id
+        messages = [Message(0, text)]
+
+        switch = False
+        use_bot = db.get_req_var(id, 'use_bot')
+        if use_bot:
+            data = m.predict(text)
+            switch = not Bot.check_bot(data, messages, True, id)
+
+        next_id = db.push_messages(request.request_id, messages)
+        return ApiResponse(True, next_id - (1 if switch else 0))
     except Exception as e:
         return ApiResponse(False, str(e))
 

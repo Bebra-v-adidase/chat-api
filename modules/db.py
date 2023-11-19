@@ -10,7 +10,8 @@ def create_tables():
             category INTEGER,
             priority INTEGER,
             messages JSON,
-            employee_id INTEGER
+            employee_id INTEGER,
+            use_bot BOOLEAN DEFAULT TRUE
         )
     ''')
 
