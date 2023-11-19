@@ -34,7 +34,10 @@ async def getHistory(request: GetHistoryData):
     try:
         last_id = int(request.start_from)
         messages = db.get_history(request.request_id)
-        return ApiResponse(True, messages[last_id:])
+        return ApiResponse(True, {
+            'count': len(messages),
+            'items': messages[last_id:]
+        })
     except Exception as e:
         return ApiResponse(False, str(e))
 
