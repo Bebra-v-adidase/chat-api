@@ -10,12 +10,12 @@ class CRUD:
         self.conn = get_connection()
         self.cursor = self.conn.cursor()
 
-    def create_request(self, category: int, priority: int, messages: list, employee_id: int, use_bot: bool):
+    def create_request(self, category: int, priority: int, messages: list, employee_id: int, bot_step: int):
         messages = json.dumps(messages, cls=MessageEncoder)
         self.cursor.execute('''
-            INSERT INTO requests (category, priority, messages, employee_id, use_bot)
+            INSERT INTO requests (category, priority, messages, employee_id, bot_step)
             VALUES (?, ?, ?, ?, ?)
-        ''', (category, priority, messages, employee_id, use_bot,))
+        ''', (category, priority, messages, employee_id, bot_step,))
 
         request_id = self.cursor.lastrowid
         self.conn.commit()
@@ -24,6 +24,8 @@ class CRUD:
 
     def push_messages(self, request_id: int, new_m: List[Message]):
         messages = self.get_history(request_id)
+        first_id = len(messages)
+
         messages += new_m
         m_encoded = json.dumps(messages, cls=MessageEncoder)
 
@@ -32,7 +34,7 @@ class CRUD:
         ''', (m_encoded, request_id))
         self.conn.commit()
 
-        return len(messages)
+        return first_id
 
     def get_req_var(self, request_id: int, var: str):
         self.cursor.execute('SELECT '+var+' FROM requests WHERE id = ?', (request_id,))

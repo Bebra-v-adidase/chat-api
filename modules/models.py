@@ -4,10 +4,14 @@ from typing import List
 from pydantic import BaseModel
 
 class Message:
-    def __init__(self, from_id: int, text: str, date: int = None):
+    def __init__(self, from_id: int, text: str, date: int = None, name: str = None, avatar: str = None):
         self.text = text
         self.from_id = from_id
         self.date = date or int(time())
+
+        if name:
+            self.name = name
+            self.avatar = avatar
 
 class MessageEncoder(json.JSONEncoder):
     def default(self, obj):

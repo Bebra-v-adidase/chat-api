@@ -17,7 +17,7 @@ async def createRequest(request: CreateRequestData):
         messages = [Message(0, text)]
         use_bot = Bot.check_bot(data, messages)
 
-        id = db.create_request(data[0], data[1], messages, 0, use_bot)
+        id = db.create_request(data[0], data[1], messages, 0, 0 if use_bot else -1)
 
         return ApiResponse(True, id)
     except Exception as e:
@@ -31,13 +31,17 @@ async def sendMessage(request: SendMessageData):
         messages = [Message(0, text)]
 
         switch = False
-        use_bot = db.get_req_var(id, 'use_bot')
-        if use_bot:
+        use_bot = db.get_req_var(id, 'bot_step')
+        if use_bot > 0:
             data = m.predict(text)
             switch = not Bot.check_bot(data, messages, True, id)
 
-        next_id = db.push_messages(request.request_id, messages)
-        return ApiResponse(True, next_id - (1 if switch else 0))
+        first_id = db.push_messages(request.request_id, messages)
+
+        if not switch:
+            bot = Bot(id)
+
+        return ApiResponse(True, first_id + 1)
     except Exception as e:
         return ApiResponse(False, str(e))
 

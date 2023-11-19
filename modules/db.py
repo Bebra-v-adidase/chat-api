@@ -11,7 +11,7 @@ def create_tables():
             priority INTEGER,
             messages JSON,
             employee_id INTEGER,
-            use_bot BOOLEAN DEFAULT TRUE
+            bot_step INTEGER DEFAULT 0
         )
     ''')
 
