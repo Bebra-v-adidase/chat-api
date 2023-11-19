@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from services.crud import CRUD
+from modules.models import *
 from modules.request_classifier import RequestClassifier
-from modules.models import CreateRequestData, SendMessageData, ApiResponse, Message
 
 db = CRUD()
 router = APIRouter()
@@ -28,3 +28,12 @@ async def createRequest(request: SendMessageData):
         return ApiResponse(True, message_id)
     except Exception as e:
         return ApiResponse(False, str(e))
+
+@router.post("/getHistory")
+async def createRequest(request: GetHistoryData):
+    try:
+        messages = db.get_history(request.request_id)
+        return ApiResponse(True, messages)
+    except Exception as e:
+        return ApiResponse(False, str(e))
+

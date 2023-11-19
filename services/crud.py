@@ -21,13 +21,7 @@ class CRUD:
         return request_id
 
     def push_message(self, request_id: int, msg: Message):
-        self.cursor.execute('SELECT messages FROM requests WHERE id = ?', (request_id,))
-        result = self.cursor.fetchone()
-
-        if not result:
-            raise 'no such request'
-
-        messages = json.loads(result[0])
+        messages = self.get_history(request_id)
         messages.append(msg)
         m_encoded = json.dumps(messages, cls=MessageEncoder)
 
@@ -37,3 +31,12 @@ class CRUD:
         self.conn.commit()
 
         return len(messages) - 1
+
+    def get_history(self, request_id: int):
+        self.cursor.execute('SELECT messages FROM requests WHERE id = ?', (request_id,))
+        result = self.cursor.fetchone()
+
+        if not result:
+            raise 'no such request'
+
+        return json.loads(result[0]) or []
