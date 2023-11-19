@@ -31,8 +31,8 @@ async def sendMessage(request: SendMessageData):
         messages = [Message(0, text)]
 
         switch = False
-        use_bot = db.get_req_var(id, 'bot_step')
-        if use_bot > 0:
+        step = db.get_req_var(id, 'bot_step')
+        if step > -1:
             data = m.predict(text)
             switch = not Bot.check_bot(data, messages, True, id)
 
